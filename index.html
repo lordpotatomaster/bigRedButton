@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>The Big Red Button</title>
+
+        <style>
+        * { padding: 0; margin: 0; }
+            canvas {
+                background: #eee; 
+                display: block; 
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                margin-top: -160px; 
+                margin-left: -240px;
+            }
+
+            #boom {
+                position: fixed;
+                display: none;
+                top: 50%;
+                left: 50%;
+                margin-top: -160px; 
+                margin-left: -240px;                
+            }
+        </style>
+
+
+
+    </head>
+    <body>
+        <img id="boom" src = "https://c.tenor.com/yZ3SgR_2mX0AAAAC/boom-explosion.gif"> 
+        <canvas id="myCanvas" width="480" height="320"></canvas>
+
+        <script>
+            let canvas = document.getElementById("myCanvas");
+            let ctx = canvas.getContext("2d"); 
+
+            let radius = 50;
+            let buttonX = canvas.width/2;
+            let buttonY = canvas.height/2;
+
+            ctx.drawImage(boom, 0, 0);
+
+            ctx.beginPath();
+            ctx.arc(buttonX, buttonY, radius, 0, Math.PI*2);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.font = "30px Arial";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "black";
+            ctx.fillText("DO NOT PRESS!!!", canvas.width/2, canvas.height/2 + 100);
+   
+
+
+
+            document.addEventListener("mousemove", updateMousePosition, true);
+            document.addEventListener("mouseup", clickButton, false);
+
+
+            let mouseX = 0;
+            let mouseY = 0;
+            function updateMousePosition(event)   {
+                mouseX = event.clientX - canvas.offsetLeft;
+                mouseY = event.clientY - canvas.offsetTop;
+            }
+
+            function clickButton(event)    {
+                if (Math.sqrt((mouseX - buttonX)**2 + (mouseY - buttonY)**2) <= radius) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    console.log("Clicked");
+                    document.getElementById("boom").style.display = "block";
+                    canvas.remove();
+                    setTimeout(closeTab, 3000);
+                }
+            }
+            
+
+            function closeTab() {
+                window.close();
+            }
+
+
+
+
+        </script>
+    </body>
+</html>
