@@ -2,12 +2,12 @@
 
 <html>
     <head>
-        <title>The Big Red Button</title>
+        <title>The Button</title>
 
         <style>
         * { padding: 0; margin: 0; }
             canvas {
-                background: #eee; 
+                background: rgb(255, 255, 255); 
                 display: block; 
                 position: fixed;
                 top: 50%;
@@ -24,6 +24,10 @@
                 margin-top: -160px; 
                 margin-left: -240px;                
             }
+            #cursor {
+                position: fixed;
+                display: none;          
+            }
         </style>
 
 
@@ -31,6 +35,7 @@
     </head>
     <body>
         <img id="boom" src = "https://c.tenor.com/yZ3SgR_2mX0AAAAC/boom-explosion.gif"> 
+        <img id="cursor" src = "file:///Users/2345834/Desktop/mac-cursor.png">
         <canvas id="myCanvas" width="480" height="320"></canvas>
 
         <script>
@@ -40,24 +45,70 @@
             let radius = 50;
             let buttonX = canvas.width/2;
             let buttonY = canvas.height/2;
+            let clicked = false;
 
-            ctx.drawImage(boom, 0, 0);
-
-            ctx.beginPath();
-            ctx.arc(buttonX, buttonY, radius, 0, Math.PI*2);
-            ctx.fillStyle = "red";
-            ctx.fill();
-            ctx.lineWidth = 5;
-            ctx.stroke();
-            ctx.closePath();
-
-            ctx.font = "30px Arial";
-            ctx.textAlign = "center";
-            ctx.fillStyle = "black";
-            ctx.fillText("DO NOT PRESS!!!", canvas.width/2, canvas.height/2 + 100);
-   
+            cursorX = -10;
+            cursorY = -10;
 
 
+
+            function drawButton(hover)   {
+                ctx.clearRect(buttonX-6, buttonY-6, 2 * Math.PI, 2 * Math.PI);
+                ctx.beginPath();
+                ctx.arc(buttonX, buttonY, radius, 0, Math.PI*2);
+                ctx.fillStyle = "red";
+                ctx.fill();
+                ctx.lineWidth = 5;
+                ctx.stroke();
+                if (hover != "no") {
+                    ctx.font = "25px Arial";
+                    ctx.textAlign = "center";
+                    ctx.fillStyle = "black";
+                    ctx.fillText("STOP!!!", buttonX, buttonY + 10);
+                }
+                ctx.closePath();
+            }
+            drawButton("no")            
+            window.onload = function()  {
+                let cursor = document.getElementById("cursor");
+                ctx.drawImage(cursor, cursorX, cursorY, cursor.width / 12, cursor.height / 12);
+                document.getElementById("cursor").style.display = "block";
+
+            }
+
+            function moveCursor()   {
+                console.log("drawing cursor")
+                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                    ctx.drawImage(cursor, cursorX, cursorY, cursor.width / 11, cursor.height / 11);
+
+                    if (Math.sqrt((cursorX - buttonX)**2 + (cursorY - buttonY)**2) <= radius) {
+                        buttonClicked("yes");
+                    } else  {
+                        drawButton("no");
+                    }
+                    if (cursorY < canvas.height/2)  {
+                        cursorX = cursorX + 2
+                        cursorY = cursorY + 2
+                    } else if(cursorX < canvas.width/2)   {
+                        cursorX = cursorX + 2
+                    }
+
+                    if (cursorY < canvas.height/2 || cursorX < canvas.width/2)  {
+                        console.log("updated mouse position")
+                        window.requestAnimationFrame(moveCursor);
+                    }   else    {
+                        setTimeout(buttonClicked, 1000)
+                    }
+
+            }
+
+            function text(text) {    
+                
+                ctx.font = "30px Arial";
+                ctx.textAlign = "center";
+                ctx.fillStyle = "black";
+                ctx.fillText(text, canvas.width/2, canvas.height/2 + 100);
+            }
 
             document.addEventListener("mousemove", updateMousePosition, true);
             document.addEventListener("mouseup", clickButton, false);
@@ -68,22 +119,95 @@
             function updateMousePosition(event)   {
                 mouseX = event.clientX - canvas.offsetLeft;
                 mouseY = event.clientY - canvas.offsetTop;
+                if (Math.sqrt((mouseX - buttonX)**2 + (mouseY - buttonY)**2) <= radius && clicked === false) {
+                    drawButton("yes")
+                } else  {
+                    drawButton("no")
+                }
             }
 
             function clickButton(event)    {
-                if (Math.sqrt((mouseX - buttonX)**2 + (mouseY - buttonY)**2) <= radius) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    console.log("Clicked");
-                    document.getElementById("boom").style.display = "block";
-                    canvas.remove();
-                    setTimeout(closeTab, 3000);
+                if (Math.sqrt((mouseX - buttonX)**2 + (mouseY - buttonY)**2) <= radius && clicked === false) {
+                    buttonClicked();
                 }
             }
             
+            function buttonClicked()  {
+                console.log("Clicked");
+                document.getElementById("boom").style.display = "block";
+                canvas.remove();
+                clicked = true;
+                setTimeout(closeTab, 3000);
+            }
 
             function closeTab() {
                 window.close();
             }
+
+
+            drawButton()
+            text("DO NOT PRESS!!!")
+            setTimeout(one, 2000);
+
+            function one()   {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton()
+                text("I'm warning you!");
+                setTimeout(two, 2000);
+            }
+
+            function two()   {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton()
+                text("Don't do it");
+                setTimeout(three, 2000);
+            }
+
+            function three()   {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton()
+                text("Please, resist the urge");
+                setTimeout(four, 2000);
+            }
+
+            function four()   {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton()
+                text("I'll do anything");
+                setTimeout(five, 2000);
+            }
+
+            function five()   {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton()
+                text("Are you really not gonna press it?");
+                setTimeout(six, 2000);
+            }
+
+            function six()   {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton()
+                text("PRESS IT!!!");
+                setTimeout(seven, 2000);
+            }
+
+            function seven()   {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton()
+                text("Unbelievable");
+                setTimeout(eight, 2000);
+            }
+
+            function eight()   {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton("")
+                text("Fine, I'll do it myself");
+                setTimeout(moveCursor, 2000);
+            }
+
+
+
+
 
 
 
