@@ -60,7 +60,7 @@
                 ctx.fill();
                 ctx.lineWidth = 5;
                 ctx.stroke();
-                if (hover != "no") {
+                if (hover === "yes") {
                     ctx.font = "25px Arial";
                     ctx.textAlign = "center";
                     ctx.fillStyle = "black";
@@ -79,14 +79,16 @@
             function moveCursor()   {
                 console.log("drawing cursor")
                     ctx.clearRect(0, 0, canvas.width, canvas.height)
+                    drawButton("no")
                     ctx.drawImage(cursor, cursorX, cursorY, cursor.width / 11, cursor.height / 11);
 
                     if (Math.sqrt((cursorX - buttonX)**2 + (cursorY - buttonY)**2) <= radius) {
-                        buttonClicked("yes");
+                        drawButton("no");
+                        ctx.drawImage(cursor, cursorX, cursorY, cursor.width / 11, cursor.height / 11);
                     } else  {
                         drawButton("no");
                     }
-                    if (cursorY < canvas.height/2)  {
+                    if (cursorY < buttonY)  {
                         cursorX = cursorX + 2
                         cursorY = cursorY + 2
                     } else if(cursorX < canvas.width/2)   {
